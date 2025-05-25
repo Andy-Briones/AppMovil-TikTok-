@@ -4,27 +4,82 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.app_prueba_tkt.SecondActivity;
+import com.example.app_prueba_tkt.entities.Usuario;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class SecondActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
+public class SecondActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_second);
-
+        CrearCuenta();
         Button btnIngresar = findViewById(R.id.btniniciar);
         btnIngresar.setOnClickListener(v -> {
-            Log.i("Main", "Ah");
-
-            Intent intent = new Intent(this, VideoActivity.class);
+            Validar();
+        });
+    }
+    public void CrearCuenta()
+    {
+        TextView tvCrearCuenta = findViewById(R.id.crearCuenta);
+        tvCrearCuenta.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CrearCuentaActivity.class);
             startActivity(intent);
+        });
+    }
+    public void Validar()
+    {
+        EditText email = findViewById(R.id.entradaCorreo);
+        EditText contrasenia = findViewById(R.id.editTextNumberPassword);
+
+        String inputemail = email.getText().toString().trim();
+        String inputpassword = contrasenia.getText().toString().trim();
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("usuarios");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean encontrado = false;
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    Usuario usuario = userSnapshot.getValue(Usuario.class);
+                    if (usuario != null && inputemail.equals(usuario.email) && inputpassword.equals(usuario.contrasena)) {
+                        encontrado = true;
+                        // Usuario válido
+                        Intent intent = new Intent(SecondActivity.this, VideoActivity.class);
+                        startActivity(intent);
+                        finish();
+                        break;
+                    }
+                }
+                if (!encontrado) {
+                    Toast.makeText(SecondActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
         });
     }
 }

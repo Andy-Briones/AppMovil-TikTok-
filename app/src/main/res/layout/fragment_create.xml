@@ -1,40 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreateFragment">
+    tools:context=".CreateFragment"
+    android:background="@color/black">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        tools:context=".SubirVideo"
+        android:background="@color/black">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Crear TikTok"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
+        <VideoView
+            android:id="@+id/voltearsCamara"
+            android:layout_width="396dp"
+            android:layout_height="506dp"
+            android:background="#000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.466"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.333" />
 
-        <Button
-            android:id="@+id/btn_select_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Seleccionar Video"
-            android:layout_marginTop="24dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/salirDelModoSubirVideo"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="56dp"
+            android:layout_height="59dp"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            app:icon="@drawable/baseline_close_24"
+            app:iconTint="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btn_upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Subir"
-            android:layout_marginTop="16dp" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/herramientasDerecha"
+            android:layout_width="60dp"
+            android:layout_height="292dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:icon="@drawable/outline_cycle_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/flash"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:icon="@drawable/outline_bolt_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/timer"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:icon="@drawable/outline_av_timer_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/activarAudio"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:icon="@drawable/outline_mic_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/agrandaroPantalla"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:layout_weight="1"
+                app:icon="@drawable/outline_open_in_full_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/efectos"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="match_parent"
+                android:layout_height="19dp"
+                android:layout_weight="1"
+                app:icon="@drawable/baseline_person_24"
+                app:iconSize="32dp"
+                app:iconTint="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/opcionesInferior"
+            android:layout_width="408dp"
+            android:layout_height="37dp"
+            android:layout_marginBottom="50dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/duracion"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duración"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/video"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Foto"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/texto"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Texto"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="280dp"
+            android:layout_height="105dp"
+            android:layout_marginBottom="104dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/grabar"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="113dp"
+                android:layout_height="105dp"
+                app:icon="@drawable/outline_circle_24"
+                app:iconSize="100dp"
+                app:iconTint="@color/white" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="69dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginBottom="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout2"
+            app:layout_constraintTop_toTopOf="@+id/opcionesInferior"
+            app:srcCompat="@drawable/baseline_home_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

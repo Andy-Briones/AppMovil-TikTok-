@@ -2,4 +2,30 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="mi_rojo">#E53935</color>
+
+    <!-- Colores personalizados -->
+    <color name="my_primary">#6200EE</color>
+    <color name="my_secondary">#03DAC5</color>
+    <color name="my_background">#FFFFFF</color>
+    <color name="my_onPrimary">#FFFFFF</color>
+    <color name="my_onSecondary">#000000</color>
+
+    <color name="color_background">#121212</color>
+    <color name="color_surface">#1E1E1E</color>
+    <color name="color_onBackground">#FFFFFF</color>
+    <color name="color_onSurface">#E0E0E0</color>
+
+
+    <color name="color_primary">#FF2D55</color>
+    <color name="color_primary_variant">#D81B60</color>
+    <color name="color_onPrimary">#FFFFFF</color>
+
+
+    <color name="color_secondary">#BB86FC</color>
+    <color name="color_onSecondary">#000000</color>
+
+    <!-- Colores para tabs -->
+    <color name="tab_selected">#FF2D55</color>
+    <color name="tab_unselected">#CCCCCC</color>
 </resources>

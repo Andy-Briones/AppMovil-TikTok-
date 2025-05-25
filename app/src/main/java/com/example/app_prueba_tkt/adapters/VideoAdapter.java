@@ -1,5 +1,6 @@
 package com.example.app_prueba_tkt.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app_prueba_tkt.R;
+import com.example.app_prueba_tkt.entities.Usuario;
 import com.example.app_prueba_tkt.entities.Video;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public int contLike=0;
     private List<Video> data;
 
-    public VideoAdapter(List<Video>data){ this.data=data; }
+    public VideoAdapter(List<Video>data){ this.data=data;}
 
     @NonNull
     @Override
@@ -41,7 +43,14 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         ImageButton imgbtnLike = holder.itemView.findViewById(R.id.meGusta);
 
         tvNomVideo.setText(video.nombreVideo);
-        vVideo.setVideoPath(video.archivoVideo);
+
+        String videoPath = video.archivoVideo;
+        if (videoPath != null && !videoPath.isEmpty()) {
+            vVideo.setVideoPath(videoPath);
+        } else {
+            // Maneja el caso en que el videoPath es nulo o vacío
+            Log.e("VideoAdapter", "El archivo de video es nulo o vacío para el video: " + video.nombreVideo);
+        }
 
         vVideo.stopPlayback();
         vVideo.setOnPreparedListener(mp ->
@@ -64,5 +73,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public class VideoViewHolder extends RecyclerView.ViewHolder
     {
         public VideoViewHolder(@NonNull View itemView){super(itemView);}
+    }
+    public void updateData(List<Video> newVideos) {
+        this.data.clear();
+        this.data.addAll(newVideos);
+        notifyDataSetChanged();
     }
 }

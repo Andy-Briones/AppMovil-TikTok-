@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "568895921925",
+    "firebase_url": "https://apptiktok-225c3-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "apptiktok-225c3",
+    "storage_bucket": "apptiktok-225c3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568895921925:android:01a489d73e3cf5d615216c",
+        "android_client_info": {
+          "package_name": "com.example.app_prueba_tkt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_g5k9WBdVWNKEt2hSxB8zvaqqfIU-pzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
