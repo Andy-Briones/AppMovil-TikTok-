@@ -15,6 +15,7 @@ import com.example.app_prueba_tkt.R;
 import com.example.app_prueba_tkt.entities.Usuario;
 import com.example.app_prueba_tkt.entities.Video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder>
@@ -79,4 +80,11 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.data.addAll(newVideos);
         notifyDataSetChanged();
     }
+    public List<Video> getCurrentData() {
+        return new ArrayList<>(this.data); // Asegúrate de que `data` sea el nombre de tu lista interna
+    }
+//    public void playVideoAtPosition(int position) {
+//        notifyDataSetChanged(); // Detiene los anteriores
+//        playVideoAtPosition(position);
+//    }
 }

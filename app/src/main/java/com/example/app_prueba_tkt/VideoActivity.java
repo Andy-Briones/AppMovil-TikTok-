@@ -5,6 +5,7 @@ import static com.example.app_prueba_tkt.R.*;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -29,7 +31,13 @@ import com.example.app_prueba_tkt.entities.VideoPexels;
 import com.example.app_prueba_tkt.entities.VideoResponsePexels;
 import com.example.app_prueba_tkt.services.VideosService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +51,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class VideoActivity extends AppCompatActivity {
 
     ImageButton imgbtnLike;
+    List<Video> data;
+    List<String> videosurl;
+    VideoAdapter videoAdapter;
     TextView tvNombre;
     TextView tvdescripcion;
     DatabaseReference databaseReference;
@@ -68,7 +79,13 @@ public class VideoActivity extends AppCompatActivity {
         tvNombre = findViewById(R.id.editTextName);
         tvdescripcion = findViewById(id.editTextBio);
 
-        List<Video> data = new ArrayList<>();
+        //Storage Firebase
+        FirebaseApp.initializeApp(this);
+        setContentView(layout.activity_video);
+
+
+
+        data = new ArrayList<>();
 //
         data.add(new Video("Video 1", "/storage/emulated/0/Download/13509997_2160_3840_30fps.mp4"));
         data.add(new Video("Video 2", "/storage/emulated/0/Download/13500906_1080_1920_30fps.mp4"));
@@ -77,11 +94,31 @@ public class VideoActivity extends AppCompatActivity {
         data.add(new Video("Video 5", "/storage/emulated/0/Download/242729_small.mp4"));
 
 
-        VideoAdapter videoAdapter = new VideoAdapter(data);
+        videoAdapter = new VideoAdapter(data);
         RecyclerView rvVideos = findViewById(R.id.rvVideo);
         rvVideos.setLayoutManager(new LinearLayoutManager(this));
         rvVideos.setAdapter(videoAdapter);
 
+//        rvVideos.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (newState == RecyclerView.SCROLL_STATE_IDLE)
+//                {
+//                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//                    int PosicionVisible = layoutManager.findFirstCompletelyVisibleItemPosition();
+//
+//                    if(PosicionVisible != RecyclerView.NO_POSITION)
+//                    {
+//                        videoAdapter.playVideoAtPosition(PosicionVisible);
+//                    }
+//                }
+//            }
+//        });
+
+        videosurl = new ArrayList<>();
+
+        SubirArchivo();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.pexels.com/v1/").addConverterFactory(GsonConverterFactory.create())
@@ -105,6 +142,7 @@ public class VideoActivity extends AppCompatActivity {
                             String titVideo ="Video1"+video.id;
                             String urlVideo = video.video_files.get(0).link;
                             nuevosvideos.add(new Video(titVideo, urlVideo));
+
                         }
                     }
                     videoAdapter.updateData(nuevosvideos);
@@ -156,6 +194,33 @@ public class VideoActivity extends AppCompatActivity {
                             .commit();
                 }
                 return true;
+            }
+        });
+    }
+    public void SubirArchivo()
+    {
+        DatabaseReference videosRef = FirebaseDatabase.getInstance().getReference("videos");
+
+        videosRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Video> listavideosdeFirebase = new ArrayList<>();
+
+                for (DataSnapshot videoSnapshot : snapshot.getChildren()) {
+                    String url = videoSnapshot.getValue(String.class);
+                    if (url != null && !url.isEmpty())
+                    {
+                        listavideosdeFirebase.add(new Video("Video Firebase", url));
+                    }
+                }
+                List<Video> videoscombinados = new ArrayList<>(videoAdapter.getCurrentData());
+                videoscombinados.addAll(listavideosdeFirebase);
+                videoAdapter.updateData(videoscombinados);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(VideoActivity.this, "Error al cargar videos", Toast.LENGTH_SHORT).show();
             }
         });
     }

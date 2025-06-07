@@ -1,12 +1,30 @@
 package com.example.app_prueba_tkt;
 
+import android.content.Intent;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
+import android.widget.Button;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +33,10 @@ import android.view.ViewGroup;
  */
 public class CreateFragment extends Fragment {
 
+    public static final int REQUEST_VIDEO_CAPTURE = 1;
+    public static final int REQUEST_PERMISSIONS = 101;
+    private Uri vireouri;
+    public View view;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,10 +77,64 @@ public class CreateFragment extends Fragment {
         }
     }
 
+    //<com.google.android.material.button.MaterialButton
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create, container, false);
+         view = inflater.inflate(R.layout.fragment_create, container, false);
+        ButtonGrabar();
+
+        return  view;
+    }
+    public void ButtonGrabar()
+    {
+        Button btnGrabarVideo = view.findViewById(R.id.grabar);
+        btnGrabarVideo.setOnClickListener(v -> PermisosyGraba());
+    }
+    public void ButtonStorage()
+    {
+        Button btnGalería = view.findViewById(R.id.btnGalería);
+
+    }
+    private void PermisosyGraba() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{
+                    Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO
+            }, REQUEST_PERMISSIONS);
+        } else {
+            launchCamera();
+        }
+    }
+    private void launchCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_VIDEO_CAPTURE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            vireouri = data.getData();
+            uploadVideoToFirebase(vireouri);
+        }
+    }
+
+    private void uploadVideoToFirebase(Uri uri) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference videoRef = storageRef.child("videos/" + UUID.randomUUID().toString() + ".mp4");
+
+        videoRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot -> videoRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    FirebaseDatabase.getInstance().getReference("videos").push().setValue(downloadUri.toString());
+                    Toast.makeText(getContext(), "Video subido correctamente", Toast.LENGTH_SHORT).show();
+                }))
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Error al subir video", Toast.LENGTH_SHORT).show();
+                });
     }
 }
