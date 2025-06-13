@@ -22,12 +22,20 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <ListView
-            android:id="@+id/list_friends"
+        <SearchView
+            android:id="@+id/buscador"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="1dp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:queryHint="Buscar usuarios"
+            />
+<!--Aqui RecyclerView-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvamigos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 

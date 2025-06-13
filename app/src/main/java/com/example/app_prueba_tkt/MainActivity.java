@@ -13,8 +13,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
     SharedPreferences preferences;
+    Button btnIngresarC;
+    Button btnIngresarFb;
+    Button btnIngresaG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,37 +28,37 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        //VERIFICAR LOGIN
-//        preferences = getSharedPreferences("com.example.app_prueba_tkt.preferences", MODE_PRIVATE);
-//        boolean autenticar = preferences.getBoolean("Esta_auntenticado", false);
-//        if (autenticar)
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (user == null)
 //        {
-//            Open();
-//            return;
+//            Intent intent = new Intent(this, SecondActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//            finish();
 //        }
 
-        Button btnGoogle = findViewById(R.id.btnInicionGoogle);
+        btnIngresaG = findViewById(R.id.btnInicionGoogle);
+        btnIngresarC = findViewById(R.id.btnInicioUserName);
+        btnIngresarFb = findViewById(R.id.btnInicioFacebook);
+        Botones();
 
-        btnGoogle.setOnClickListener(v ->
+
+    }
+    public void Botones()
+    {
+        btnIngresaG.setOnClickListener(v ->
         {
             Log.i("Main", "Ah");
             Intent intent = new Intent(this, SecondActivity.class);
             startActivity(intent);
-//            if (true)
-//            {
-//                SharedPreferences.Editor editor= preferences.edit();
-//                editor.putBoolean("Esta_auntenticado",true);
-//                editor.putString("","");
-//                editor.apply();
-//                Open();
-//            }
         });
-
+        btnIngresarC.setOnClickListener(v -> {
+            Intent intent = new Intent(this,SecondActivity.class);
+            startActivity(intent);
+        });
+        btnIngresarFb.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SecondActivity.class);
+            startActivity(intent);
+        });
     }
-//    public void Open()
-//    {
-//        Intent intent = new Intent(this, SecondActivity.class);
-//        startActivity(intent);
-//        finish();
-//    }
 }

@@ -1,13 +1,33 @@
 package com.example.app_prueba_tkt;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.app_prueba_tkt.adapters.VideoProfileAdapter;
+import com.example.app_prueba_tkt.entities.Video;
+import com.example.app_prueba_tkt.entities.Video_Profile;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +36,13 @@ import android.widget.Button;
  */
 public class ProfileFragment extends Fragment {
 
+    private List<Video_Profile> listavideos;
+    private VideoProfileAdapter adapter;
+    TextView nombreLogin;
+    TextView siguiendologin;
+    TextView seguidoresLogin;
+    Button btnsalir;
+    Button btnatras;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -25,7 +52,6 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    Button btnSalir;
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -47,7 +73,7 @@ public class ProfileFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+//
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +86,154 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        btnsalir = view.findViewById(R.id.btnSalir);
+        btnatras = view.findViewById(R.id.btnRegresar);
+        nombreLogin = view.findViewById(R.id.nombreUsuario);
+        siguiendologin = view.findViewById(R.id.siguiendo);
+        seguidoresLogin = view.findViewById(R.id.seguidores);
+        RecyclerView rvideosperfil = view.findViewById(R.id.rvVideo_profile);
+        rvideosperfil.setVisibility(View.VISIBLE);
+        rvideosperfil.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        listavideos = new ArrayList<>();
+        adapter = new VideoProfileAdapter(listavideos);
+        rvideosperfil.setAdapter(adapter);
+
+        VerVideoPerfil();
+        CargarDatosPerfil();
+        Atras();
+        //CerrarSesion();
+
+        return view;
+    }
+    //Regresar atras cuando ves un perfil
+    public void Atras()
+    {
+        btnatras.setOnClickListener(v -> {
+            getParentFragmentManager().popBackStack();
+        });
+    }
+    //Salir
+//    public void CerrarSesion()
+//    {
+//        btnsalir.setOnClickListener(v -> {
+//            FirebaseAuth.getInstance().signOut();
+//            Intent intent = new Intent(getActivity(), SecondActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(intent);
+//        });
+//    }
+
+    public void VerVideoPerfil()
+    {
+        //String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String id;
+
+        if (getArguments() != null && getArguments().containsKey("idUsuario")) {
+            id = getArguments().getString("idUsuario");
+        } else {
+            id = FirebaseAuth.getInstance().getCurrentUser().getUid(); // fallback por si se abre desde otro lado
+        }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("videos_por_user").child(id);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listavideos.clear();
+                for (DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
+                    Video_Profile videoProfile = dataSnapshot.getValue(Video_Profile.class);
+                    if (videoProfile != null)
+                    {
+                        listavideos.add(videoProfile);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    public void CargarDatosPerfil()
+    {
+        btnatras.setVisibility(View.GONE);
+        String idlogin;
+
+        //UID del usuario cuyo perfil se está viendo
+        if (getArguments() != null && getArguments().containsKey("idUsuario"))
+        {
+            idlogin = getArguments().getString("idUsuario"); // el perfil que estás viendo
+            btnatras.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            idlogin = FirebaseAuth.getInstance().getCurrentUser().getUid(); // tu propio perfil
+        }
+//        String idlogin;
+//        if (getArguments() != null && getArguments().containsKey("idUsuario"))
+//        {
+//            idlogin = getInstance().getCurrentUser().getUid();
+//        }
+//        else
+//        {
+//            idlogin = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        }
+        //Nombre en el Perfil, se pasa la referencia de firebase
+        DatabaseReference myref = FirebaseDatabase.getInstance().getReference("usuarios").child(idlogin);
+        myref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists())
+                {
+                    String name = snapshot.child("nombreUsuario").getValue(String.class);
+                    nombreLogin.setText(name != null ? name : "Usuario");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //Número de siguiendo, aumenta el número si sigues a alguien
+        DatabaseReference seguiref = FirebaseDatabase.getInstance().getReference("Follows").child(idlogin);
+        seguiref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Long numerosiguiendo = snapshot.getChildrenCount();
+                siguiendologin.setText("Siguiendo\n"+ numerosiguiendo);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //Número de seguidores, aumenta el numero si te siguen
+        DatabaseReference follref = FirebaseDatabase.getInstance().getReference("Follows");
+        follref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                long numeroseguidores = 0;
+                for (DataSnapshot snapshots : snapshot.getChildren())
+                {
+                    if (snapshots.hasChild(idlogin))
+                    {
+                        numeroseguidores++;
+                    }
+                }
+                seguidoresLogin.setText("Seguidores\n"+numeroseguidores);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

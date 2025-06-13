@@ -29,6 +29,7 @@ import com.example.app_prueba_tkt.entities.Usuario;
 import com.example.app_prueba_tkt.entities.Video;
 import com.example.app_prueba_tkt.entities.VideoPexels;
 import com.example.app_prueba_tkt.entities.VideoResponsePexels;
+import com.example.app_prueba_tkt.entities.Video_Profile;
 import com.example.app_prueba_tkt.services.VideosService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
@@ -40,7 +41,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,15 +87,17 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(layout.activity_video);
 
 
+        //Videos dentro del emulador
 
         data = new ArrayList<>();
-//
         data.add(new Video("Video 1", "/storage/emulated/0/Download/13509997_2160_3840_30fps.mp4"));
         data.add(new Video("Video 2", "/storage/emulated/0/Download/13500906_1080_1920_30fps.mp4"));
         data.add(new Video("Video 3", "/storage/emulated/0/Download/71350-538489808_small.mp4"));
         data.add(new Video("Video 4", "/storage/emulated/0/Download/71563-538962838_small.mp4"));
         data.add(new Video("Video 5", "/storage/emulated/0/Download/242729_small.mp4"));
 
+        // Mezclar el orden de los videos
+        Collections.shuffle(data);
 
         videoAdapter = new VideoAdapter(data);
         RecyclerView rvVideos = findViewById(R.id.rvVideo);
@@ -118,6 +123,7 @@ public class VideoActivity extends AppCompatActivity {
 
         videosurl = new ArrayList<>();
 
+        //Aqui esta la api
         SubirArchivo();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -160,6 +166,7 @@ public class VideoActivity extends AppCompatActivity {
 //        bundle.putString("nombre",tvNombre.getText().toString());
 //        bundle.putString("bio", tvdescripcion.getText().toString());
 
+        //Vistas de los Fragments
         FrameLayout fragments = findViewById(id.fragments);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
@@ -207,15 +214,36 @@ public class VideoActivity extends AppCompatActivity {
                 List<Video> listavideosdeFirebase = new ArrayList<>();
 
                 for (DataSnapshot videoSnapshot : snapshot.getChildren()) {
-                    String url = videoSnapshot.getValue(String.class);
-                    if (url != null && !url.isEmpty())
-                    {
-                        listavideosdeFirebase.add(new Video("Video Firebase", url));
+                    String url = videoSnapshot.child("videoURL").getValue(String.class);
+                    String titulo = "Video Público";
+                    if (url != null) {
+                        listavideosdeFirebase.add(new Video(titulo, url));
                     }
                 }
+
+                //Publicar los videos al principio
                 List<Video> videoscombinados = new ArrayList<>(videoAdapter.getCurrentData());
                 videoscombinados.addAll(listavideosdeFirebase);
                 videoAdapter.updateData(videoscombinados);
+//                for (DataSnapshot videoSnapshot : snapshot.getChildren()) {
+//                    Object value = videoSnapshot.getValue();
+//
+//                    if (value instanceof String) {
+//                        String url = (String) value;
+//                        listavideosdeFirebase.add(new Video("Video Firebase", url));
+//                    } else if (value instanceof Map) {
+//                        Map<String, Object> map = (Map<String, Object>) value;
+//                        for (Object innerValue : map.values()) {
+//                            if (innerValue instanceof String) {
+//                                String url = (String) innerValue;
+//                                listavideosdeFirebase.add(new Video("Video Firebase", url));
+//                            }
+//                        }
+//                    }
+//                }
+//                List<Video> videoscombinados = new ArrayList<>(videoAdapter.getCurrentData());
+//                videoscombinados.addAll(listavideosdeFirebase);
+//                videoAdapter.updateData(videoscombinados);
             }
 
             @Override

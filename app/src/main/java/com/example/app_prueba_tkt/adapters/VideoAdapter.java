@@ -43,6 +43,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         TextView tvContadorLike= holder.itemView.findViewById(R.id.contadorLike);
         ImageButton imgbtnLike = holder.itemView.findViewById(R.id.meGusta);
 
+
         tvNomVideo.setText(video.nombreVideo);
 
         String videoPath = video.archivoVideo;
@@ -80,9 +81,7 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         this.data.addAll(newVideos);
         notifyDataSetChanged();
     }
-    public List<Video> getCurrentData() {
-        return new ArrayList<>(this.data); // Asegúrate de que `data` sea el nombre de tu lista interna
-    }
+    public List<Video> getCurrentData() {return new ArrayList<>(this.data);}
 //    public void playVideoAtPosition(int position) {
 //        notifyDataSetChanged(); // Detiene los anteriores
 //        playVideoAtPosition(position);

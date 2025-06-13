@@ -20,10 +20,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -37,6 +41,7 @@ public class CreateFragment extends Fragment {
     public static final int REQUEST_PERMISSIONS = 101;
     private Uri vireouri;
     public View view;
+    public String userid;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -93,11 +98,12 @@ public class CreateFragment extends Fragment {
         Button btnGrabarVideo = view.findViewById(R.id.grabar);
         btnGrabarVideo.setOnClickListener(v -> PermisosyGraba());
     }
-    public void ButtonStorage()
-    {
-        Button btnGalería = view.findViewById(R.id.btnGalería);
-
-    }
+    //para ver la galeria, pero esta sin configurar
+//    public void ButtonStorage()
+//    {
+//        Button btnGalería = view.findViewById(R.id.btnGalería);
+//
+//    }
     private void PermisosyGraba() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -125,12 +131,27 @@ public class CreateFragment extends Fragment {
     }
 
     private void uploadVideoToFirebase(Uri uri) {
+
+        userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference videoRef = storageRef.child("videos/" + UUID.randomUUID().toString() + ".mp4");
 
         videoRef.putFile(uri)
                 .addOnSuccessListener(taskSnapshot -> videoRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                    FirebaseDatabase.getInstance().getReference("videos").push().setValue(downloadUri.toString());
+//                    FirebaseDatabase.getInstance().getReference("videos").push().setValue(downloadUri.toString());
+                    String url = downloadUri.toString();
+
+                    DatabaseReference fbref = FirebaseDatabase.getInstance().getReference("videos_por_user").child(userid);
+                    String idvideo = fbref.push().getKey();
+
+                    Map<String, Object> videoData = new HashMap<>();
+                    videoData.put("videoURL", downloadUri.toString());
+                    videoData.put("timestamp", System.currentTimeMillis());//esto no es necesario/depende
+                    fbref.child(idvideo).setValue(videoData);
+
+                    FirebaseDatabase.getInstance().getReference("videos_por_user").push().setValue(url);
+
                     Toast.makeText(getContext(), "Video subido correctamente", Toast.LENGTH_SHORT).show();
                 }))
                 .addOnFailureListener(e -> {

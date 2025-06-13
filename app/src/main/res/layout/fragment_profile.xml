@@ -21,7 +21,18 @@
             app:layout_constraintHorizontal_bias="0.057"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.046" />
+            app:layout_constraintVertical_bias="0.098" />
+
+        <Button
+            android:id="@+id/btnRegresar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/flecha"
+            />
 
         <TextView
             android:id="@+id/nombreUsuario"
@@ -94,7 +105,7 @@
                 android:id="@+id/siguiendo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Siguiendo\n100"
+                android:text="Siguiendo\n"
                 android:textAlignment="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -103,7 +114,7 @@
                 android:id="@+id/seguidores"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seguidores\n200"
+                android:text="Seguidores\n"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toStartOf="@id/meGustaTotal"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -114,7 +125,7 @@
                 android:id="@+id/meGustaTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Me gusta\n300"
+                android:text="Me gusta\n0"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -206,7 +217,8 @@
                 android:id="@+id/tab_videos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:icon="@drawable/baseline_add_road_24" />
+                android:icon="@drawable/baseline_add_road_24"/>
+
 
             <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_privados"
@@ -234,7 +246,6 @@
 
         </com.google.android.material.tabs.TabLayout>
 
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="0dp"
@@ -247,6 +258,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVideo_profile"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
