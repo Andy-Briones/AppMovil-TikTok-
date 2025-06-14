@@ -15,7 +15,11 @@ import android.widget.SearchView;
 
 import com.example.app_prueba_tkt.adapters.FriendAdapter;
 import com.example.app_prueba_tkt.adapters.UsuarioAdapter;
+import com.example.app_prueba_tkt.adapters.VideoProfileAdapter;
 import com.example.app_prueba_tkt.entities.Usuario;
+import com.example.app_prueba_tkt.entities.Video;
+import com.example.app_prueba_tkt.entities.Video_Profile;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
+import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +38,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FriendsFragment extends Fragment {
+    List<Video_Profile> Videosamigos = new ArrayList<>();
+    FriendAdapter adapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,51 +87,57 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
-        SearchView buscar = view.findViewById(R.id.buscador);
-        RecyclerView rvusers = view.findViewById(R.id.rvamigos);
-        rvusers.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        List<Usuario> listaususarios = new ArrayList<>();
-        FriendAdapter adapter = new FriendAdapter(listaususarios, getParentFragmentManager(), getContext());
-        rvusers.setAdapter(adapter);
+        RecyclerView rvideosamigos = view.findViewById(R.id.rvVideoAmigos);
+        rvideosamigos.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new FriendAdapter(getContext(), Videosamigos);
+        rvideosamigos.setAdapter(adapter);
 
-        DatabaseReference refusers = FirebaseDatabase.getInstance().getReference("usuarios");
-        buscar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        CargarVideos();
+
+        return view;
+    }
+    public void CargarVideos()
+    {
+        String idActual = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Follows").child(idActual);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                buscarusuarios(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                buscarusuarios(newText);
-                return true;
-            }
-            private void buscarusuarios(String nombre)
-            {
-                refusers.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<Usuario> resultado = new ArrayList<>();
-                        for (DataSnapshot user: snapshot.getChildren())
-                        {
-                            Usuario usuario = user.getValue(Usuario.class);
-                            if (usuario != null && usuario.nombreUsuario.toLowerCase().contains(nombre.toLowerCase()))
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Videosamigos.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren())
+                {
+                    String idSiguiendo = dataSnapshot.getKey();
+                    DatabaseReference myref = FirebaseDatabase.getInstance()
+                            .getReference("videos_por_user")
+                            .child(idSiguiendo);
+                    myref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot data : snapshot.getChildren())
                             {
-                                resultado.add(usuario);
+                                Video_Profile video = data.getValue(Video_Profile.class);
+                                if (video != null)
+                                {
+                                    video.userId = idSiguiendo;
+                                    Videosamigos.add(video);
+                                }
                             }
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.updateList(resultado);
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-        return view;
     }
 }

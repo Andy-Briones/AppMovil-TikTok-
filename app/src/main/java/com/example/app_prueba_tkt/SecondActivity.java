@@ -33,6 +33,22 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_second);
+
+        //Revisar sesiones si están activas
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+        {
+            startActivity(new Intent(this, VideoActivity.class));
+            finish();
+            return;
+        }
+
+        //Si hay login
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_second);
+
+        //Offline
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         CrearCuenta();
         Button btnIngresar = findViewById(R.id.btniniciar);
         btnIngresar.setOnClickListener(v -> {
@@ -67,32 +83,5 @@ public class SecondActivity extends AppCompatActivity {
                    }
                 });
 
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference ref = database.getReference("usuarios");
-//        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                boolean encontrado = false;
-//                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-//                    Usuario usuario = userSnapshot.getValue(Usuario.class);
-//                    if (usuario != null && inputemail.equals(usuario.email) && inputpassword.equals(usuario.contrasena)) {
-//                        encontrado = true;
-//                        // Usuario válido
-//                        Intent intent = new Intent(SecondActivity.this, VideoActivity.class);
-//                        startActivity(intent);
-//                        finish();
-//                        break;
-//                    }
-//                }
-//                if (!encontrado) {
-//                    Toast.makeText(SecondActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
     }
 }

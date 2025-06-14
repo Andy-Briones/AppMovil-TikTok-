@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.app_prueba_tkt.adapters.VideoProfileAdapter;
+import com.example.app_prueba_tkt.entities.Usuario;
 import com.example.app_prueba_tkt.entities.Video;
 import com.example.app_prueba_tkt.entities.Video_Profile;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,11 +41,14 @@ public class ProfileFragment extends Fragment {
 
     private List<Video_Profile> listavideos;
     private VideoProfileAdapter adapter;
+    TextView Senombre;
     TextView nombreLogin;
     TextView siguiendologin;
     TextView seguidoresLogin;
     Button btnsalir;
     Button btnatras;
+    MaterialButton btnAmigos;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,9 +96,11 @@ public class ProfileFragment extends Fragment {
 
         btnsalir = view.findViewById(R.id.btnSalir);
         btnatras = view.findViewById(R.id.btnRegresar);
+        btnAmigos = view.findViewById(R.id.encontrarAmigos);
         nombreLogin = view.findViewById(R.id.nombreUsuario);
         siguiendologin = view.findViewById(R.id.siguiendo);
         seguidoresLogin = view.findViewById(R.id.seguidores);
+
         RecyclerView rvideosperfil = view.findViewById(R.id.rvVideo_profile);
         rvideosperfil.setVisibility(View.VISIBLE);
         rvideosperfil.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -104,7 +112,8 @@ public class ProfileFragment extends Fragment {
         VerVideoPerfil();
         CargarDatosPerfil();
         Atras();
-        //CerrarSesion();
+        Amigos();
+        CerrarSesion();
 
         return view;
     }
@@ -116,15 +125,16 @@ public class ProfileFragment extends Fragment {
         });
     }
     //Salir
-//    public void CerrarSesion()
-//    {
-//        btnsalir.setOnClickListener(v -> {
-//            FirebaseAuth.getInstance().signOut();
-//            Intent intent = new Intent(getActivity(), SecondActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//            startActivity(intent);
-//        });
-//    }
+    public void CerrarSesion()
+    {
+        btnsalir.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(requireActivity(), SecondActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            requireActivity().finish();
+        });
+    }
 
     public void VerVideoPerfil()
     {
@@ -214,6 +224,17 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+        // Ver siguiendo
+        siguiendologin.setOnClickListener(v -> {
+            String id = getArguments() != null && getArguments().containsKey("idUsuario")
+                    ? getArguments().getString("idUsuario")
+                    : FirebaseAuth.getInstance().getCurrentUser().getUid();
+            VerSegFragment fragment = VerSegFragment.newInstance(id, "siguiendo");
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragments, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
         //Número de seguidores, aumenta el numero si te siguen
         DatabaseReference follref = FirebaseDatabase.getInstance().getReference("Follows");
         follref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -235,5 +256,29 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+        //Ver seguidores
+        seguidoresLogin.setOnClickListener(v -> {
+            String id = getArguments() != null && getArguments().containsKey("idUsuario")
+                    ? getArguments().getString("idUsuario")
+                    : FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            VerSegFragment fragment = VerSegFragment.newInstance(id,"seguidores");
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragments, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
+    }
+    public void Amigos()
+    {
+        btnAmigos.setOnClickListener(v ->
+        {
+            HomeFragment homeFragment = new HomeFragment();
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragments, homeFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+        );
     }
 }

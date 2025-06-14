@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ public class VideoProfileAdapter extends RecyclerView.Adapter<VideoProfileAdapte
         Video_Profile videop = data.get(position);
 
         VideoView vvideo = holder.itemView.findViewById(R.id.videoViewP);
+        ProgressBar cargando = holder.itemView.findViewById(R.id.loadingIndicator);
         vvideo.setVideoURI(Uri.parse(videop.videoURL));
         vvideo.seekTo(1);
 
@@ -51,7 +53,13 @@ public class VideoProfileAdapter extends RecyclerView.Adapter<VideoProfileAdapte
         vvideo.setOnPreparedListener(mp ->
         {
             mp.setLooping(true);
+            cargando.setVisibility(View.GONE);
             mp.start();
+        });
+        vvideo.setOnErrorListener((mp, what, extra)->
+        {
+            cargando.setVisibility(View.GONE);
+            return true;
         });
     }
 
@@ -62,6 +70,7 @@ public class VideoProfileAdapter extends RecyclerView.Adapter<VideoProfileAdapte
 
     public class VideoProfileViewHolder extends RecyclerView.ViewHolder {
         public VideoProfileViewHolder(@NonNull View itemView) {
+
             super(itemView);
         }
     }

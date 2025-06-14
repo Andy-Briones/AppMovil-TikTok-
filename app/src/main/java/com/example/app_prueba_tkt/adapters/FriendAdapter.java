@@ -2,22 +2,30 @@ package com.example.app_prueba_tkt.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.browse.MediaBrowser;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app_prueba_tkt.FriendsFragment;
 import com.example.app_prueba_tkt.ProfileFragment;
 import com.example.app_prueba_tkt.R;
 import com.example.app_prueba_tkt.entities.Usuario;
+import com.example.app_prueba_tkt.entities.Video_Profile;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,80 +35,70 @@ import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendAdapterViewHolder>
 {
-    Context context;
-    FragmentManager fragmentManager;
-    List<Usuario>Listaamigos;
-
-    public FriendAdapter(List<Usuario>listaamigos, FragmentManager fragmentManager, Context context)
+    private final Context context;
+    private final List<Video_Profile> lista;
+    public FriendAdapter(Context context, List<Video_Profile>lista)
     {
-        this.Listaamigos = listaamigos;
-        this.fragmentManager = fragmentManager;
         this.context = context;
+        this.lista = lista;
     }
 
     @NonNull
     @Override
     public FriendAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
-
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_friend, parent, false);
         return new FriendAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FriendAdapterViewHolder holder, int position) {
-        Usuario user = Listaamigos.get(position);
+        Video_Profile video = lista.get(position);
+        PlayerView view = holder.itemView.findViewById(R.id.playerView);
 
-        holder.nombre.setText(user.nombreUsuario);
+        ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
+        view.setPlayer(exoPlayer);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        MediaItem mediaItem = MediaItem.fromUri(Uri.parse(video.videoURL));
+        exoPlayer.setMediaItem(mediaItem);
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+
+        exoPlayer.addListener(new androidx.media3.common.Player.Listener() {
             @Override
-            public void onClick(View v) {
-                ProfileFragment fragment = new ProfileFragment();
-                Bundle ar = new Bundle();
-                ar.putString("idUsuario", user.idUsuario);
-                fragment.setArguments(ar);
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragments, fragment)
-                        .addToBackStack(null)
-                        .commit();
+            public void onRenderedFirstFrame() {
+                holder.cargando.setVisibility(View.GONE);
             }
         });
-        holder.btnseguir.setOnClickListener(v -> {
-            String userActual = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            String userDestino = user.idUsuario;
+        DatabaseReference myref = FirebaseDatabase.getInstance()
+                .getReference("usuarios").child(video.userId);
 
-            DatabaseReference follow = FirebaseDatabase.getInstance().getReference("Follows");
-            follow.child(userActual).child(userDestino).setValue(true)
-                    .addOnSuccessListener(vv ->{
-                        Toast.makeText(context, "Siguiendo a"+ user.nombreUsuario, Toast.LENGTH_SHORT).show();
-                    }).addOnFailureListener(ff ->
-                    {
-                        Toast.makeText(context, "Error al seguir", Toast.LENGTH_SHORT).show();
-                    });
+        myref.get().addOnSuccessListener(dataSnapshot ->
+        {
+           if (dataSnapshot.exists())
+           {
+               String name = dataSnapshot.child("nombreUsuario").getValue(String.class);
+               holder.nameU.setText("@"+name);
+           }
+           else
+           {
+               holder.nameU.setText("@Error");
+           }
         });
+
     }
 
     @Override
     public int getItemCount() {
-        return Listaamigos.size();
+        return lista.size();
     }
 
     public class FriendAdapterViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
-        Button btnseguir;
+        ProgressBar cargando;
+        TextView nameU;
         public FriendAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            nombre = itemView.findViewById(R.id.tvNombreUsuario);
-            btnseguir = itemView.findViewById(R.id.btnseguimiento);
+            cargando = itemView.findViewById(R.id.loadingIndicator);
+            nameU = itemView.findViewById(R.id.tvNameVideo);
         }
-    }
-
-    public void updateList(List<Usuario> nuevo)
-    {
-        Listaamigos.clear();
-        Listaamigos.addAll(nuevo);
-        notifyDataSetChanged();
     }
 }

@@ -7,7 +7,22 @@
     <VideoView
         android:id="@+id/videoViewP"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent"/>
+
+<!--    <androidx.media3.ui.PlayerView-->
+<!--        android:id="@+id/videoViewPp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        app:resize_mode="zoom"-->
+<!--        app:use_controller="false"-->
+<!--        android:layout_gravity="center" />-->
+
+
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </FrameLayout>

@@ -3,40 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FriendsFragment">
+    tools:context=".FriendsFragment"
+    android:paddingTop="10dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
+        android:id="@+id/tvFriendsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amigos"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvVideoAmigos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="#000000">
-
-        <TextView
-            android:id="@+id/tvFriendsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amigos"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <SearchView
-            android:id="@+id/buscador"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@color/white"
-            android:queryHint="Buscar usuarios"
-            />
-<!--Aqui RecyclerView-->
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvamigos"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
+        android:layout_height="match_parent"/>
 
 </FrameLayout>
