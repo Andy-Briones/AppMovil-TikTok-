@@ -3,8 +3,11 @@ package com.example.app_prueba_tkt;
 import static com.example.app_prueba_tkt.R.*;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -90,11 +93,21 @@ public class VideoActivity extends AppCompatActivity {
         //Videos dentro del emulador
 
         data = new ArrayList<>();
-        data.add(new Video("Video 1", "/storage/emulated/0/Download/13509997_2160_3840_30fps.mp4"));
-        data.add(new Video("Video 2", "/storage/emulated/0/Download/13500906_1080_1920_30fps.mp4"));
-        data.add(new Video("Video 3", "/storage/emulated/0/Download/71350-538489808_small.mp4"));
-        data.add(new Video("Video 4", "/storage/emulated/0/Download/71563-538962838_small.mp4"));
-        data.add(new Video("Video 5", "/storage/emulated/0/Download/242729_small.mp4"));
+
+        //Simulación de offline
+        if (!Conexion()){
+            data.add(new Video("Video 1", "/storage/emulated/0/Download/13509997_2160_3840_30fps.mp4"));
+            data.add(new Video("Video 2", "/storage/emulated/0/Download/13500906_1080_1920_30fps.mp4"));
+            Toast.makeText(this, "Sin conexión a internet.", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            data.add(new Video("Video 1", "/storage/emulated/0/Download/13509997_2160_3840_30fps.mp4"));
+            data.add(new Video("Video 2", "/storage/emulated/0/Download/13500906_1080_1920_30fps.mp4"));
+            data.add(new Video("Video 3", "/storage/emulated/0/Download/71350-538489808_small.mp4"));
+            data.add(new Video("Video 4", "/storage/emulated/0/Download/71563-538962838_small.mp4"));
+            data.add(new Video("Video 5", "/storage/emulated/0/Download/242729_small.mp4"));
+        }
 
         // Mezclar el orden de los videos
         Collections.shuffle(data);
@@ -103,23 +116,6 @@ public class VideoActivity extends AppCompatActivity {
         RecyclerView rvVideos = findViewById(R.id.rvVideo);
         rvVideos.setLayoutManager(new LinearLayoutManager(this));
         rvVideos.setAdapter(videoAdapter);
-
-//        rvVideos.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == RecyclerView.SCROLL_STATE_IDLE)
-//                {
-//                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-//                    int PosicionVisible = layoutManager.findFirstCompletelyVisibleItemPosition();
-//
-//                    if(PosicionVisible != RecyclerView.NO_POSITION)
-//                    {
-//                        videoAdapter.playVideoAtPosition(PosicionVisible);
-//                    }
-//                }
-//            }
-//        });
 
         videosurl = new ArrayList<>();
 
@@ -161,10 +157,6 @@ public class VideoActivity extends AppCompatActivity {
                 Log.d("PixabayAPI", "Error al obtener videos: ");
             }
         });
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString("nombre",tvNombre.getText().toString());
-//        bundle.putString("bio", tvdescripcion.getText().toString());
 
         //Vistas de los Fragments
         FrameLayout fragments = findViewById(id.fragments);
@@ -225,25 +217,6 @@ public class VideoActivity extends AppCompatActivity {
                 List<Video> videoscombinados = new ArrayList<>(videoAdapter.getCurrentData());
                 videoscombinados.addAll(listavideosdeFirebase);
                 videoAdapter.updateData(videoscombinados);
-//                for (DataSnapshot videoSnapshot : snapshot.getChildren()) {
-//                    Object value = videoSnapshot.getValue();
-//
-//                    if (value instanceof String) {
-//                        String url = (String) value;
-//                        listavideosdeFirebase.add(new Video("Video Firebase", url));
-//                    } else if (value instanceof Map) {
-//                        Map<String, Object> map = (Map<String, Object>) value;
-//                        for (Object innerValue : map.values()) {
-//                            if (innerValue instanceof String) {
-//                                String url = (String) innerValue;
-//                                listavideosdeFirebase.add(new Video("Video Firebase", url));
-//                            }
-//                        }
-//                    }
-//                }
-//                List<Video> videoscombinados = new ArrayList<>(videoAdapter.getCurrentData());
-//                videoscombinados.addAll(listavideosdeFirebase);
-//                videoAdapter.updateData(videoscombinados);
             }
 
             @Override
@@ -251,5 +224,11 @@ public class VideoActivity extends AppCompatActivity {
                 Toast.makeText(VideoActivity.this, "Error al cargar videos", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private boolean Conexion()
+    {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        return ni != null && ni.isConnected();
     }
 }
