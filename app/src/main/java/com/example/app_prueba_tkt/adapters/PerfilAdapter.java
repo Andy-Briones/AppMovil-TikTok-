@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
@@ -14,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.app_prueba_tkt.HomeFragment;
 import com.example.app_prueba_tkt.R;
 import com.example.app_prueba_tkt.entities.Usuario;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -21,10 +25,12 @@ public class PerfilAdapter extends RecyclerView.Adapter<PerfilAdapter.PerfilAdap
 {
     FragmentManager fragmentManager;
     List<Usuario> Listaamigos;
-    public PerfilAdapter(List<Usuario>listaamigos, FragmentManager fragmentManager)
+    Context context;
+    public PerfilAdapter(List<Usuario>listaamigos, FragmentManager fragmentManager, Context context)
     {
         this.Listaamigos = listaamigos;
         this.fragmentManager = fragmentManager;
+        this.context = context;
     }
     @NonNull
     @Override
@@ -51,6 +57,7 @@ public class PerfilAdapter extends RecyclerView.Adapter<PerfilAdapter.PerfilAdap
                         .commit();
             }
         });
+
     }
 
     @Override
@@ -60,10 +67,12 @@ public class PerfilAdapter extends RecyclerView.Adapter<PerfilAdapter.PerfilAdap
 
     public class PerfilAdapterViewHolder extends RecyclerView.ViewHolder {
         Button btnAmigos;
+        Button btnSeguir;
         public PerfilAdapterViewHolder(@NonNull View itemView) {
 
             super(itemView);
             btnAmigos = itemView.findViewById(R.id.encontrarAmigos);
+            btnSeguir = itemView.findViewById(R.id.btnSeguirp);
         }
     }
 }

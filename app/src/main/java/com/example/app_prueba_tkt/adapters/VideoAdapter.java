@@ -11,7 +11,9 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.app_prueba_tkt.FriendsFragment;
 import com.example.app_prueba_tkt.R;
+import com.example.app_prueba_tkt.VerSegFragment;
 import com.example.app_prueba_tkt.entities.Usuario;
 import com.example.app_prueba_tkt.entities.Video;
 

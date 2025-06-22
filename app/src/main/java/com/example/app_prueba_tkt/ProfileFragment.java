@@ -47,6 +47,9 @@ public class ProfileFragment extends Fragment {
     TextView seguidoresLogin;
     Button btnsalir;
     Button btnatras;
+    Button btnedit;
+    Button btnseguirp;
+    Button btnCompartir;
     MaterialButton btnAmigos;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -96,6 +99,9 @@ public class ProfileFragment extends Fragment {
 
         btnsalir = view.findViewById(R.id.btnSalir);
         btnatras = view.findViewById(R.id.btnRegresar);
+        btnedit = view.findViewById(R.id.editarPerfil);
+        btnseguirp = view.findViewById(R.id.btnSeguirp);
+        btnCompartir = view.findViewById(R.id.compartirPerfil);
         btnAmigos = view.findViewById(R.id.encontrarAmigos);
         nombreLogin = view.findViewById(R.id.nombreUsuario);
         siguiendologin = view.findViewById(R.id.siguiendo);
@@ -171,7 +177,10 @@ public class ProfileFragment extends Fragment {
     }
     public void CargarDatosPerfil()
     {
+        //Ocultar botones
+        btnseguirp.setVisibility(View.GONE);
         btnatras.setVisibility(View.GONE);
+
         String idlogin;
 
         //UID del usuario cuyo perfil se está viendo
@@ -179,6 +188,10 @@ public class ProfileFragment extends Fragment {
         {
             idlogin = getArguments().getString("idUsuario"); // el perfil que estás viendo
             btnatras.setVisibility(View.VISIBLE);
+            btnseguirp.setVisibility(View.VISIBLE);
+            btnedit.setVisibility(View.INVISIBLE);
+            btnCompartir.setVisibility(View.INVISIBLE);
+            btnsalir.setVisibility(View.INVISIBLE);
         }
         else
         {
@@ -202,6 +215,11 @@ public class ProfileFragment extends Fragment {
                 {
                     String name = snapshot.child("nombreUsuario").getValue(String.class);
                     nombreLogin.setText(name != null ? name : "Usuario");
+
+                    if (getArguments() != null && getArguments().containsKey("idUsuario"))
+                    {
+                        SeguirddPerfil(idlogin, name != null ? name: "Usuario");
+                    }
                 }
             }
 
@@ -281,4 +299,81 @@ public class ProfileFragment extends Fragment {
         }
         );
     }
+    public void SeguirddPerfil(String userDestinoId, String nombreUsuarioDestino) {
+        String userActual = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        btnseguirp.setEnabled(false);
+        btnseguirp.setText("Cargando...");
+
+        DatabaseReference followRef = FirebaseDatabase.getInstance().getReference("Follows")
+                .child(userActual)
+                .child(userDestinoId);
+
+        followRef.get().addOnSuccessListener(data -> {
+            if (data.exists()) {
+                btnseguirp.setEnabled(false);
+                btnseguirp.setText("Siguiendo");
+            } else {
+                btnseguirp.setEnabled(true);
+                btnseguirp.setText("Seguir");
+
+                btnseguirp.setOnClickListener(null);
+                btnseguirp.setOnClickListener(v -> {
+                    FirebaseDatabase.getInstance().getReference("Follows")
+                            .child(userActual)
+                            .child(userDestinoId)
+                            .setValue(true)
+                            .addOnSuccessListener(vv -> {
+                                Toast.makeText(requireContext(), "Siguiendo a " + nombreUsuarioDestino, Toast.LENGTH_SHORT).show();
+                                btnseguirp.setEnabled(false);
+                                btnseguirp.setText("Siguiendo");
+                            })
+                            .addOnFailureListener(ff -> {
+                                Toast.makeText(requireContext(), "Error al seguir", Toast.LENGTH_SHORT).show();
+                            });
+                });
+            }
+        });
+    }
+//    public void DejarDeSeguirPerfil(String userDestinoId, String nombreUsuarioDestino) {
+//        String userActual = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//
+//        btnseguirp.setEnabled(false);
+//        btnseguirp.setText("Cargando...");
+//
+//        DatabaseReference followRef = FirebaseDatabase.getInstance()
+//                .getReference("Follows")
+//                .child(userActual)
+//                .child(userDestinoId);
+//
+//        followRef.get().addOnSuccessListener(data -> {
+//            if (data.exists()) {
+//                btnseguirp.setEnabled(true);
+//                btnseguirp.setText("Dejar de seguir");
+//
+//                btnseguirp.setOnClickListener(v -> {
+//                    followRef.removeValue()
+//                            .addOnSuccessListener(vv -> {
+//                                Toast.makeText(requireContext(), "Has dejado de seguir a " + nombreUsuarioDestino, Toast.LENGTH_SHORT).show();
+//                                btnseguirp.setEnabled(true);
+//                                btnseguirp.setText("Seguir");
+//
+//                                // Opcional: Vuelve a cargar el estado actualizado
+//                                SeguirddPerfil(userDestinoId, nombreUsuarioDestino);
+//                            })
+//                            .addOnFailureListener(ff -> {
+//                                Toast.makeText(requireContext(), "Error al dejar de seguir", Toast.LENGTH_SHORT).show();
+//                            });
+//                });
+//            } else {
+//                btnseguirp.setEnabled(true);
+//                btnseguirp.setText("Seguir");
+//
+//                // Puedes redirigir aquí a la función Seguir directamente si lo deseas
+//                btnseguirp.setOnClickListener(v -> {
+//                    SeguirddPerfil(userDestinoId, nombreUsuarioDestino);
+//                });
+//            }
+//        });
+//    }
 }

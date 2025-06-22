@@ -63,6 +63,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendAdap
         exoPlayer.prepare();
         exoPlayer.setPlayWhenReady(true);
 
+        //loop
+        exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
+
+        //exoPlayer.setPlayWhenReady(true);
+
         exoPlayer.addListener(new androidx.media3.common.Player.Listener() {
             @Override
             public void onRenderedFirstFrame() {

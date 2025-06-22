@@ -1,136 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NotificationsFragment">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        tools:context=".MainActivity">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <com.google.android.material.button.MaterialButton
+        <ImageButton
             android:id="@+id/nuevoGrupo"
-            style="@style/Widget.Material3.Button.IconButton"
-            app:iconTint="@color/black"
-            app:icon="@drawable/outline_group_add_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:src="@drawable/outline_group_add_24"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Nuevo grupo" />
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Bandeja de entrada"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall"
-            app:layout_constraintStart_toEndOf="@id/nuevoGrupo"
-            app:layout_constraintEnd_toStartOf="@id/buscarEnBandeja"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/nuevoGrupo"
-            app:layout_constraintHorizontal_bias="0.5"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"/>
+            android:textSize="18sp"
+            android:gravity="center" />
 
-        <com.google.android.material.button.MaterialButton
+        <ImageButton
             android:id="@+id/buscarEnBandeja"
-            style="@style/Widget.Material3.Button.IconButton"
-            app:iconTint="@color/black"
-            app:icon="@drawable/outline_footprint_24"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:src="@drawable/outline_footprint_24"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Buscar en bandeja" />
 
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="381dp"
-            android:layout_height="87dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/textView6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/nuevosSeguidores"
-            tools:layout_editor_absoluteX="1dp">
+<!--    &lt;!&ndash; Historias horizontal &ndash;&gt;-->
+<!--    <HorizontalScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:fillViewport="true">-->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/linearLayout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/historias"
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/avatars" />
-        </LinearLayout>
+<!--            &lt;!&ndash; Ejemplo de avatar &ndash;&gt;-->
+<!--            <ImageView-->
+<!--                android:layout_width="56dp"-->
+<!--                android:layout_height="56dp"-->
+<!--                android:layout_marginEnd="12dp"-->
+<!--                android:scaleType="centerCrop" />-->
 
+<!--            &lt;!&ndash; Repetir según historias disponibles &ndash;&gt;-->
 
-        <LinearLayout
-            android:id="@+id/nuevosSeguidores"
-            android:layout_width="382dp"
-            android:layout_height="65dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="3dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/actividad"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+<!--        </LinearLayout>-->
+<!--    </HorizontalScrollView>-->
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageView2"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/nuevos_seguidores" />
-        </LinearLayout>
+    <!-- Sección Nuevos Seguidores -->
+    <LinearLayout
+        android:id="@+id/nuevosSeguidores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical">
 
-        <LinearLayout
-            android:id="@+id/actividad"
-            android:layout_width="382dp"
-            android:layout_height="65dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="3dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/nuevosSeguidores"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
-            app:layout_constraintEnd_toEndOf="parent">
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/nuevos_seguidores"
+            android:scaleType="centerCrop" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageView3"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="centerCrop"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/actividad"/>
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="3 nuevos seguidores"
+            android:textSize="16sp" />
+    </LinearLayout>
 
+    <!-- Sección Actividad -->
+    <LinearLayout
+        android:id="@+id/actividad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="406dp"
-            android:layout_height="412dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/actividad"
-            app:layout_constraintVertical_bias="0.0" />
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/actividad"
+            android:scaleType="centerCrop" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Tu amigo X comentó tu video"
+            android:textSize="16sp" />
+    </LinearLayout>
 
-</FrameLayout>
+    <!-- Lista principal de mensajes -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

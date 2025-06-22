@@ -67,16 +67,20 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeAdapterVie
                holder.btnseguir.setEnabled(true);
                holder.btnseguir.setText("Seguir");
            }
-           holder.btnseguir.setOnClickListener(v -> {
-               FirebaseDatabase.getInstance().getReference().setValue(true)
-                       .addOnSuccessListener(vv ->{
-                           Toast.makeText(context, "Siguiendo a "+ user.nombreUsuario, Toast.LENGTH_SHORT).show();
-                           holder.btnseguir.setEnabled(false);
-                           holder.btnseguir.setText("Siguiendo");
-                       }).addOnFailureListener(ff ->{
-                           Toast.makeText(context, "Error al seguir", Toast.LENGTH_SHORT).show();
-                       });
-           });
+            holder.btnseguir.setOnClickListener(v -> {
+                FirebaseDatabase.getInstance().getReference("Follows")
+                        .child(userActual)
+                        .child(userDestino)
+                        .setValue(true)
+                        .addOnSuccessListener(vv -> {
+                            Toast.makeText(context, "Siguiendo a este usuario", Toast.LENGTH_SHORT).show();
+                            holder.btnseguir.setEnabled(false);
+                            holder.btnseguir.setText("Siguiendo");
+                        })
+                        .addOnFailureListener(ff -> {
+                            Toast.makeText(context, "Error al seguir", Toast.LENGTH_SHORT).show();
+                        });
+            });
         });
         //Ver perfil de usuario
         holder.itemView.setOnClickListener(v ->  {

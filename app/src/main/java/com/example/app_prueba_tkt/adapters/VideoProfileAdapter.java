@@ -1,5 +1,6 @@
 package com.example.app_prueba_tkt.adapters;
 
+import android.media.browse.MediaBrowser;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,9 @@ import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.ui.PlayerView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.app_prueba_tkt.R;
@@ -69,9 +73,10 @@ public class VideoProfileAdapter extends RecyclerView.Adapter<VideoProfileAdapte
     }
 
     public class VideoProfileViewHolder extends RecyclerView.ViewHolder {
+        PlayerView playerView;
         public VideoProfileViewHolder(@NonNull View itemView) {
-
             super(itemView);
+            playerView = itemView.findViewById(R.id.playerView);
         }
     }
 

@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".VideoActivity">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvVideo"
         android:layout_width="match_parent"
@@ -44,6 +43,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
     <TextView
+        android:id="@+id/tvsigui"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Siguiendo"
@@ -75,7 +75,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

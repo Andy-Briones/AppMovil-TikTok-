@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,6 +63,7 @@ public class VideoActivity extends AppCompatActivity {
     VideoAdapter videoAdapter;
     TextView tvNombre;
     TextView tvdescripcion;
+    TextView tvsigi;
     DatabaseReference databaseReference;
     int contadorLike = 0;
     String usuarioid;
@@ -84,6 +86,7 @@ public class VideoActivity extends AppCompatActivity {
         }
         tvNombre = findViewById(R.id.editTextName);
         tvdescripcion = findViewById(id.editTextBio);
+        tvsigi = findViewById(id.tvsigui);
 
         //Storage Firebase
         FirebaseApp.initializeApp(this);
@@ -121,6 +124,9 @@ public class VideoActivity extends AppCompatActivity {
 
         //Aqui esta la api
         SubirArchivo();
+
+        //Ver videos parati
+        VerSeguir();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.pexels.com/v1/").addConverterFactory(GsonConverterFactory.create())
@@ -230,5 +236,16 @@ public class VideoActivity extends AppCompatActivity {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return ni != null && ni.isConnected();
+    }
+    private void VerSeguir()
+    {
+        tvsigi.setOnClickListener(v -> {
+            FriendsFragment friendsFragment = new FriendsFragment();
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(id.fragments, friendsFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
     }
 }
