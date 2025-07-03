@@ -192,6 +192,7 @@ public class ProfileFragment extends Fragment {
             btnedit.setVisibility(View.INVISIBLE);
             btnCompartir.setVisibility(View.INVISIBLE);
             btnsalir.setVisibility(View.INVISIBLE);
+            btnAmigos.setVisibility(View.INVISIBLE);
         }
         else
         {
